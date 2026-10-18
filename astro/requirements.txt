@@ -1,2 +1,1 @@
 apache-airflow-providers-dbt-cloud
-snowflake-connector-python>=3.12,<4
