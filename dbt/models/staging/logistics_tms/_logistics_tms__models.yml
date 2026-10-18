@@ -1,0 +1,114 @@
+version: 2
+
+models:
+  - name: stg_logistics_tms__carrier_performance
+    description: "Staging Silver de 06_logistics_tms/carrier_performance, tipado y limpiado desde Bronze."
+    columns:
+      - name: carrier_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_logistics_tms__carriers')
+                field: carrier_id
+      - name: evaluation_date
+        tests:
+          - not_null
+  - name: stg_logistics_tms__carriers
+    description: "Staging Silver de 06_logistics_tms/carriers, tipado y limpiado desde Bronze."
+  - name: stg_logistics_tms__delivery_attempts
+    description: "Staging Silver de 06_logistics_tms/delivery_attempts, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: attempt_id
+        tests:
+          - unique
+          - not_null
+      - name: shipment_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_logistics_tms__shipments')
+                field: shipment_id
+  - name: stg_logistics_tms__routes
+    description: "Staging Silver de 06_logistics_tms/routes, tipado y limpiado desde Bronze."
+    columns:
+      - name: route_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_logistics_tms__shipments
+    description: "Staging Silver de 06_logistics_tms/shipments, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: shipment_id
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+      - name: seller_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__sellers')
+                field: seller_id
+      - name: customer_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__customers')
+                field: customer_id
+      - name: carrier_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_logistics_tms__carriers')
+                field: carrier_id
+      - name: route_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_logistics_tms__routes')
+                field: route_id
+  - name: stg_logistics_tms__transport_events
+    description: "Staging Silver de 06_logistics_tms/transport_events, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+      - name: shipment_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_logistics_tms__shipments')
+                field: shipment_id
+  - name: stg_logistics_tms__transport_incidents
+    description: "Staging Silver de 06_logistics_tms/transport_incidents, tipado y limpiado desde Bronze."
+    columns:
+      - name: incident_id
+        tests:
+          - unique
+          - not_null
+      - name: shipment_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_logistics_tms__shipments')
+                field: shipment_id
+  - name: stg_logistics_tms__vehicles
+    description: "Staging Silver de 06_logistics_tms/vehicles, tipado y limpiado desde Bronze."
+    columns:
+      - name: vehicle_id
+        tests:
+          - unique
+          - not_null
+      - name: carrier_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_logistics_tms__carriers')
+                field: carrier_id

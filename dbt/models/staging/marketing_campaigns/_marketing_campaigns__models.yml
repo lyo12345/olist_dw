@@ -1,0 +1,101 @@
+version: 2
+
+models:
+  - name: stg_marketing_campaigns__campaign_audience
+    description: "Staging Silver de 05_marketing_campaigns/campaign_audience, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: audience_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_marketing_campaigns__campaign_channels
+    description: "Staging Silver de 05_marketing_campaigns/campaign_channels, tipado y limpiado desde Bronze."
+    columns:
+      - name: campaign_channel_id
+        tests:
+          - unique
+          - not_null
+      - name: campaign_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_marketing_campaigns__campaigns')
+                field: campaign_id
+  - name: stg_marketing_campaigns__campaign_daily_metrics
+    description: "Staging Silver de 05_marketing_campaigns/campaign_daily_metrics, tipado y limpiado desde Bronze."
+    columns:
+      - name: campaign_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_marketing_campaigns__campaigns')
+                field: campaign_id
+      - name: metric_date
+        tests:
+          - not_null
+  - name: stg_marketing_campaigns__campaign_events
+    description: "Staging Silver de 05_marketing_campaigns/campaign_events, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: event_id
+        tests:
+          - unique
+          - not_null
+      - name: campaign_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_marketing_campaigns__campaigns')
+                field: campaign_id
+  - name: stg_marketing_campaigns__campaign_sales
+    description: "Staging Silver de 05_marketing_campaigns/campaign_sales, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: campaign_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_marketing_campaigns__campaigns')
+                field: campaign_id
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+      - name: order_item_id
+        tests:
+          - not_null
+  - name: stg_marketing_campaigns__campaigns
+    description: "Staging Silver de 05_marketing_campaigns/campaigns, tipado y limpiado desde Bronze."
+    columns:
+      - name: campaign_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_marketing_campaigns__promotions
+    description: "Staging Silver de 05_marketing_campaigns/promotions, tipado y limpiado desde Bronze."
+    columns:
+      - name: promotion_id
+        tests:
+          - unique
+          - not_null
+      - name: campaign_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_marketing_campaigns__campaigns')
+                field: campaign_id
+      - name: product_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__products')
+                field: product_id
+      - name: seller_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__sellers')
+                field: seller_id

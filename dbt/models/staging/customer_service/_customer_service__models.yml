@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: stg_customer_service__customers_crm
+    description: "Staging Silver de 04_customer_service/customers_crm, tipado y limpiado desde Bronze."
+    columns:
+      - name: crm_customer_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__customers')
+                field: customer_id
+  - name: stg_customer_service__escalations
+    description: "Staging Silver de 04_customer_service/escalations, tipado y limpiado desde Bronze."
+    columns:
+      - name: escalation_id
+        tests:
+          - unique
+          - not_null
+      - name: ticket_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_customer_service__service_tickets')
+                field: ticket_id
+  - name: stg_customer_service__service_agents
+    description: "Staging Silver de 04_customer_service/service_agents, tipado y limpiado desde Bronze."
+    columns:
+      - name: agent_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_customer_service__service_satisfaction
+    description: "Staging Silver de 04_customer_service/service_satisfaction, tipado y limpiado desde Bronze."
+    columns:
+      - name: survey_id
+        tests:
+          - unique
+          - not_null
+      - name: ticket_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_customer_service__service_tickets')
+                field: ticket_id
+  - name: stg_customer_service__service_tickets
+    description: "Staging Silver de 04_customer_service/service_tickets, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: ticket_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_customer_service__customers_crm')
+                field: customer_id
+      - name: order_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+      - name: assigned_agent_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_customer_service__service_agents')
+                field: agent_id
+  - name: stg_customer_service__ticket_interactions
+    description: "Staging Silver de 04_customer_service/ticket_interactions, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: interaction_id
+        tests:
+          - unique
+          - not_null
+      - name: ticket_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_customer_service__service_tickets')
+                field: ticket_id
+      - name: agent_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_customer_service__service_agents')
+                field: agent_id

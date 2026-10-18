@@ -1,0 +1,16 @@
+# Conexion dbt -> Snowflake. Las credenciales vienen de variables de entorno (archivo .env);
+# aqui NO hay secretos, por eso este archivo si puede subirse a GitHub.
+olist_silver:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
+      user: "{{ env_var('SNOWFLAKE_USER') }}"
+      password: "{{ env_var('SNOWFLAKE_PASSWORD') }}"
+      role: "{{ env_var('SNOWFLAKE_ROLE', 'SYSADMIN') }}"
+      warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE', 'COMPUTE_WH') }}"
+      database: OLIST_SYNTHETIC_V2
+      schema: PUBLIC
+      threads: 4
+      client_session_keep_alive: False

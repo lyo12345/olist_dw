@@ -1,0 +1,636 @@
+version: 2
+
+# Modelo dimensional conforme al Caso de Estudio Olist Dupla 7.
+# 18 hechos lógicos + dimensiones conformadas.
+#
+# Los hechos incluyen tests `relationships` sobre cada llave foránea hacia su
+# dimensión conformada. Esto se agregó tras detectar en revisión tres llaves
+# huérfanas (dim_stock_status, dim_payment y logistics_status_key sin
+# dimensión) que un test de integridad referencial habría revelado de forma
+# automática al ejecutar `dbt build`. dbt no falla estos tests por valores
+# NULL, solo por valores no nulos sin coincidencia en la dimensión referenciada.
+models:
+  - name: dim_date
+    description: "Una fecha"
+    columns:
+      - name: date_key
+        tests: [unique, not_null]
+  - name: dim_customer
+    description: "Un cliente analítico"
+    columns:
+      - name: customer_key
+        tests: [unique, not_null]
+  - name: dim_product
+    description: "Un producto"
+    columns:
+      - name: product_key
+        tests: [unique, not_null]
+  - name: dim_seller
+    description: "Un vendedor"
+    columns:
+      - name: seller_key
+        tests: [unique, not_null]
+  - name: dim_geography
+    description: "Una ubicación normalizada"
+    columns:
+      - name: geography_key
+        tests: [unique, not_null]
+  - name: dim_payment
+    description: "Una clasificación de pago (conformada entre Olist y Payment Gateway)"
+    columns:
+      - name: payment_key
+        tests: [unique, not_null]
+  - name: dim_channel
+    description: "Un canal normalizado"
+    columns:
+      - name: channel_key
+        tests: [unique, not_null]
+  - name: dim_warehouse
+    description: "Un almacén"
+    columns:
+      - name: warehouse_key
+        tests: [unique, not_null]
+  - name: dim_supplier
+    description: "Un proveedor"
+    columns:
+      - name: supplier_key
+        tests: [unique, not_null]
+  - name: dim_carrier
+    description: "Un transportista + sistema de origen"
+    columns:
+      - name: carrier_key
+        tests: [unique, not_null]
+  - name: dim_route
+    description: "Una ruta"
+    columns:
+      - name: route_key
+        tests: [unique, not_null]
+  - name: dim_campaign
+    description: "Una campaña"
+    columns:
+      - name: campaign_key
+        tests: [unique, not_null]
+  - name: dim_segment
+    description: "Un segmento de audiencia"
+    columns:
+      - name: segment_key
+        tests: [unique, not_null]
+  - name: dim_agent
+    description: "Un agente"
+    columns:
+      - name: agent_key
+        tests: [unique, not_null]
+  - name: dim_ticket_type
+    description: "Una clasificación de ticket"
+    columns:
+      - name: ticket_type_key
+        tests: [unique, not_null]
+  - name: dim_gateway
+    description: "Una pasarela"
+    columns:
+      - name: gateway_key
+        tests: [unique, not_null]
+  - name: dim_order_status
+    description: "Un estado de orden"
+    columns:
+      - name: order_status_key
+        tests: [unique, not_null]
+  - name: dim_stock_status
+    description: "Un estado de inventario (0/1 de stockout_flag)"
+    columns:
+      - name: stock_status_key
+        tests: [unique, not_null]
+  - name: dim_settlement_status
+    description: "Un estado de liquidación"
+    columns:
+      - name: settlement_status_key
+        tests: [unique, not_null]
+  - name: dim_reconciliation_status
+    description: "Un estado de conciliación"
+    columns:
+      - name: reconciliation_status_key
+        tests: [unique, not_null]
+  - name: dim_transaction_status
+    description: "Un estado de transacción"
+    columns:
+      - name: transaction_status_key
+        tests: [unique, not_null]
+  - name: dim_marketing_event_type
+    description: "Un tipo de evento de marketing"
+    columns:
+      - name: marketing_event_type_key
+        tests: [unique, not_null]
+  - name: dim_gateway_event_type
+    description: "Un tipo de evento de pasarela"
+    columns:
+      - name: gateway_event_type_key
+        tests: [unique, not_null]
+  - name: dim_carrier_event_type
+    description: "Un tipo de evento de transportista"
+    columns:
+      - name: carrier_event_type_key
+        tests: [unique, not_null]
+  - name: dim_incident_type
+    description: "Un tipo de incidencia"
+    columns:
+      - name: incident_type_key
+        tests: [unique, not_null]
+
+  - name: fact_ventas
+    description: "Grano: Artículo individual de una orden."
+    columns:
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: geography_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_geography')
+                field: geography_key
+      - name: customer_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: seller_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_seller')
+                field: seller_key
+      - name: product_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_key
+      - name: order_status_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_order_status')
+                field: order_status_key
+
+  - name: fact_pagos
+    description: "Grano: Pago individual registrado por el comercio."
+    columns:
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: customer_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: payment_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_payment')
+                field: payment_key
+      - name: order_status_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_order_status')
+                field: order_status_key
+
+  - name: fact_logistica
+    description: "Grano: Envío/ciclo logístico consolidado."
+    columns:
+      - name: seller_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_seller')
+                field: seller_key
+      - name: customer_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: carrier_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: carrier_key
+      - name: route_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_route')
+                field: route_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+  - name: fact_resenas
+    description: "Grano: Reseña individual."
+    columns:
+      - name: customer_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: order_status_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_order_status')
+                field: order_status_key
+
+  - name: fact_leads
+    description: "Grano: Lead u oportunidad individual del funnel."
+    columns:
+      - name: seller_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_seller')
+                field: seller_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: channel_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_channel')
+                field: channel_key
+
+  - name: fact_inventario
+    description: "Grano: Producto + almacén + fecha de snapshot."
+    columns:
+      - name: product_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_key
+      - name: warehouse_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_warehouse')
+                field: warehouse_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: stock_status_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_stock_status')
+                field: stock_status_key
+
+  - name: fact_movimientos_inventario
+    description: "Grano: Movimiento individual de inventario."
+    columns:
+      - name: product_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_key
+      - name: warehouse_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_warehouse')
+                field: warehouse_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+  - name: fact_compras
+    description: "Grano: Línea individual de orden de compra."
+    columns:
+      - name: product_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_product')
+                field: product_key
+      - name: supplier_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_supplier')
+                field: supplier_key
+      - name: warehouse_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_warehouse')
+                field: warehouse_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+
+  - name: fact_campanas
+    description: "Grano: Campaña + fecha."
+    columns:
+      - name: campaign_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_campaign')
+                field: campaign_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: segment_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_segment')
+                field: segment_key
+      - name: channel_key
+        description: >
+          Siempre resuelve a md5('UNKNOWN'), es decir, al registro UNKNOWN de dim_channel.
+          La fuente campaign_daily_metrics no reporta un canal de marketing por fila de
+          métrica diaria (a diferencia de fact_eventos_marketing, que sí trae channel desde
+          campaign_events). Se mantiene la FK a dim_channel por consistencia estructural con
+          el resto de hechos de marketing, aunque en este hecho no aporta granularidad adicional.
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_channel')
+                field: channel_key
+
+  - name: fact_eventos_marketing
+    description: "Grano: Evento individual de marketing."
+    columns:
+      - name: campaign_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_campaign')
+                field: campaign_key
+      - name: customer_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: channel_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_channel')
+                field: channel_key
+      - name: marketing_event_type_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_marketing_event_type')
+                field: marketing_event_type_key
+
+  - name: fact_atencion
+    description: "Grano: Ticket individual."
+    columns:
+      - name: customer_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: agent_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_agent')
+                field: agent_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: ticket_type_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_ticket_type')
+                field: ticket_type_key
+      - name: channel_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_channel')
+                field: channel_key
+
+  - name: fact_interacciones_atencion
+    description: "Grano: Interacción individual dentro de un ticket."
+    columns:
+      - name: customer_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_customer')
+                field: customer_key
+      - name: agent_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_agent')
+                field: agent_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: channel_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_channel')
+                field: channel_key
+
+  - name: fact_liquidaciones
+    description: "Grano: Liquidación individual."
+    columns:
+      - name: seller_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_seller')
+                field: seller_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: settlement_status_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_settlement_status')
+                field: settlement_status_key
+
+  - name: fact_conciliaciones
+    description: "Grano: Conciliación individual."
+    columns:
+      - name: seller_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_seller')
+                field: seller_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: reconciliation_status_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_reconciliation_status')
+                field: reconciliation_status_key
+
+  - name: fact_transacciones_pasarela
+    description: "Grano: Transacción individual de pasarela."
+    columns:
+      - name: gateway_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_gateway')
+                field: gateway_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: transaction_status_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_transaction_status')
+                field: transaction_status_key
+      - name: payment_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_payment')
+                field: payment_key
+
+  - name: fact_eventos_pasarela
+    description: "Grano: Evento individual de procesamiento de pagos."
+    columns:
+      - name: gateway_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_gateway')
+                field: gateway_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: gateway_event_type_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_gateway_event_type')
+                field: gateway_event_type_key
+
+  - name: fact_eventos_transportista
+    description: "Grano: Evento individual reportado por transportista."
+    columns:
+      - name: carrier_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: carrier_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: carrier_event_type_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_carrier_event_type')
+                field: carrier_event_type_key
+      - name: minutos_retraso
+        description: >
+          Siempre NULL. La fuente External Carrier (stg_external_carrier__carrier_events)
+          no expone directamente el retraso en minutos de un evento de transporte; solo
+          reporta timestamp, tipo y estado del evento. La columna se deja materializada
+          (cast(null as float)) para mantener un esquema estable y compatible con futuras
+          fuentes que sí puedan aportar este dato, en vez de omitirla del modelo.
+
+  - name: fact_incidencias_transportista
+    description: "Grano: Incidencia individual reportada por transportista."
+    columns:
+      - name: carrier_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_carrier')
+                field: carrier_key
+      - name: date_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: incident_type_key
+        tests:
+          - relationships:
+              arguments:
+                to: ref('dim_incident_type')
+                field: incident_type_key

@@ -1,0 +1,15 @@
+version: 2
+
+sources:
+  - name: marketing_campaigns
+    database: OLIST_SYNTHETIC_V2
+    schema: MARKETING_CAMPAIGNS
+    description: "Fuente Bronze: 05_marketing_campaigns"
+    tables:
+      - name: campaign_audience
+      - name: campaign_channels
+      - name: campaign_daily_metrics
+      - name: campaign_events
+      - name: campaign_sales
+      - name: campaigns
+      - name: promotions

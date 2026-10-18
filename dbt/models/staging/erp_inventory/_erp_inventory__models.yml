@@ -1,0 +1,147 @@
+version: 2
+
+models:
+  - name: stg_erp_inventory__inventory
+    description: "Staging Silver de 03_erp_inventory/inventory, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: inventory_id
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__products_erp_reference')
+                field: product_id
+      - name: warehouse_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__warehouses')
+                field: warehouse_id
+  - name: stg_erp_inventory__inventory_movements
+    description: "Staging Silver de 03_erp_inventory/inventory_movements, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: movement_id
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__products_erp_reference')
+                field: product_id
+      - name: warehouse_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__warehouses')
+                field: warehouse_id
+  - name: stg_erp_inventory__product_cost_history
+    description: "Staging Silver de 03_erp_inventory/product_cost_history, tipado y limpiado desde Bronze."
+    columns:
+      - name: product_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__products_erp_reference')
+                field: product_id
+      - name: supplier_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__suppliers')
+                field: supplier_id
+  - name: stg_erp_inventory__products_erp_reference
+    description: "Staging Silver de 03_erp_inventory/products_erp_reference, tipado y limpiado desde Bronze."
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_olist__products')
+                field: product_id
+  - name: stg_erp_inventory__purchase_order_items
+    description: "Staging Silver de 03_erp_inventory/purchase_order_items, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: purchase_order_item_id
+        tests:
+          - unique
+          - not_null
+      - name: purchase_order_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__purchase_orders')
+                field: purchase_order_id
+      - name: product_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__products_erp_reference')
+                field: product_id
+  - name: stg_erp_inventory__purchase_orders
+    description: "Staging Silver de 03_erp_inventory/purchase_orders, tipado y limpiado desde Bronze."
+    columns:
+      - name: purchase_order_id
+        tests:
+          - unique
+          - not_null
+      - name: supplier_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__suppliers')
+                field: supplier_id
+      - name: warehouse_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__warehouses')
+                field: warehouse_id
+  - name: stg_erp_inventory__replenishment_requests
+    description: "Staging Silver de 03_erp_inventory/replenishment_requests, tipado y limpiado desde Bronze."
+    columns:
+      - name: replenishment_id
+        tests:
+          - unique
+          - not_null
+      - name: product_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__products_erp_reference')
+                field: product_id
+      - name: warehouse_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__warehouses')
+                field: warehouse_id
+  - name: stg_erp_inventory__supplier_performance
+    description: "Staging Silver de 03_erp_inventory/supplier_performance, tipado y limpiado desde Bronze."
+    columns:
+      - name: supplier_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_erp_inventory__suppliers')
+                field: supplier_id
+  - name: stg_erp_inventory__suppliers
+    description: "Staging Silver de 03_erp_inventory/suppliers, tipado y limpiado desde Bronze."
+    columns:
+      - name: supplier_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_erp_inventory__warehouses
+    description: "Staging Silver de 03_erp_inventory/warehouses, tipado y limpiado desde Bronze."
+    columns:
+      - name: warehouse_id
+        tests:
+          - unique
+          - not_null

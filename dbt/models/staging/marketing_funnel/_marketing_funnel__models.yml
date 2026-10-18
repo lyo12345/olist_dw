@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: stg_marketing_funnel__closed_deals
+    description: "Staging Silver de 02_marketing_funnel/closed_deals, tipado y limpiado desde Bronze."
+    columns:
+      - name: mql_id
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_marketing_funnel__mql')
+                field: mql_id
+  - name: stg_marketing_funnel__mql
+    description: "Staging Silver de 02_marketing_funnel/mql, tipado y limpiado desde Bronze."
+    columns:
+      - name: mql_id
+        tests:
+          - unique
+          - not_null

@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: payment_gateway
+    database: OLIST_SYNTHETIC_V2
+    schema: PAYMENT_GATEWAY
+    description: "Fuente Bronze: 09_payment_gateway"
+    tables:
+      - name: chargebacks
+      - name: gateway_events
+      - name: gateway_transactions
+      - name: payment_gateways
+      - name: refunds_gateway

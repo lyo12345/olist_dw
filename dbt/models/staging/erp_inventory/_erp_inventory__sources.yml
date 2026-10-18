@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: erp_inventory
+    database: OLIST_SYNTHETIC_V2
+    schema: ERP_INVENTORY
+    description: "Fuente Bronze: 03_erp_inventory"
+    tables:
+      - name: inventory
+      - name: inventory_movements
+      - name: product_cost_history
+      - name: products_erp_reference
+      - name: purchase_order_items
+      - name: purchase_orders
+      - name: replenishment_requests
+      - name: supplier_performance
+      - name: suppliers
+      - name: warehouses

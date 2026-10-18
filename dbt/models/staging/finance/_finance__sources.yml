@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: finance
+    database: OLIST_SYNTHETIC_V2
+    schema: FINANCE
+    description: "Fuente Bronze: 07_finance"
+    tables:
+      - name: commissions
+      - name: financial_reconciliation
+      - name: payment_transactions
+      - name: refunds
+      - name: seller_accounts
+      - name: seller_settlements

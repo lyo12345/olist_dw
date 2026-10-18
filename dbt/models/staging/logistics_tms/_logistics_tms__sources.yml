@@ -1,0 +1,16 @@
+version: 2
+
+sources:
+  - name: logistics_tms
+    database: OLIST_SYNTHETIC_V2
+    schema: LOGISTICS_TMS
+    description: "Fuente Bronze: 06_logistics_tms"
+    tables:
+      - name: carrier_performance
+      - name: carriers
+      - name: delivery_attempts
+      - name: routes
+      - name: shipments
+      - name: transport_events
+      - name: transport_incidents
+      - name: vehicles

@@ -1,0 +1,68 @@
+version: 2
+
+models:
+  - name: stg_payment_gateway__chargebacks
+    description: "Staging Silver de 09_payment_gateway/chargebacks, tipado y limpiado desde Bronze."
+    columns:
+      - name: chargeback_id
+        tests:
+          - unique
+          - not_null
+      - name: gateway_transaction_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_payment_gateway__gateway_transactions')
+                field: gateway_transaction_id
+  - name: stg_payment_gateway__gateway_events
+    description: "Staging Silver de 09_payment_gateway/gateway_events, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: gateway_event_id
+        tests:
+          - unique
+          - not_null
+      - name: gateway_transaction_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_payment_gateway__gateway_transactions')
+                field: gateway_transaction_id
+  - name: stg_payment_gateway__gateway_transactions
+    description: "Staging Silver de 09_payment_gateway/gateway_transactions, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: gateway_transaction_id
+        tests:
+          - unique
+          - not_null
+      - name: gateway_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_payment_gateway__payment_gateways')
+                field: gateway_id
+      - name: order_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+  - name: stg_payment_gateway__payment_gateways
+    description: "Staging Silver de 09_payment_gateway/payment_gateways, tipado y limpiado desde Bronze."
+    columns:
+      - name: gateway_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_payment_gateway__refunds_gateway
+    description: "Staging Silver de 09_payment_gateway/refunds_gateway, tipado y limpiado desde Bronze."
+    columns:
+      - name: refund_id
+        tests:
+          - unique
+          - not_null
+      - name: gateway_transaction_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_payment_gateway__gateway_transactions')
+                field: gateway_transaction_id

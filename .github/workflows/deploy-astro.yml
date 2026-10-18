@@ -1,0 +1,26 @@
+name: Deploy to Astro
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "astro/**"
+      - ".github/workflows/deploy-astro.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      ASTRO_API_TOKEN: ${{ secrets.ASTRO_API_TOKEN }}
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+      - name: Install Astro CLI
+        uses: astronomer/setup-astro-cli@v0.0.1
+      - name: Deploy to Astro
+        uses: astronomer/deploy-action@v0.14.0
+        with:
+          deployment-id: cmv72ohnt02z001k20a56b46c
+          root-folder: astro/
+          wake-on-deploy: true

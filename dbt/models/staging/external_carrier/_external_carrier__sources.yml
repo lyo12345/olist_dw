@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: external_carrier
+    database: OLIST_SYNTHETIC_V2
+    schema: EXTERNAL_CARRIER
+    description: "Fuente Bronze: 08_external_carrier"
+    tables:
+      - name: carrier_events
+      - name: carrier_hubs
+      - name: carrier_incidents
+      - name: carrier_shipments
+      - name: carriers

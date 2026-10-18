@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: marketing_funnel
+    database: OLIST_SYNTHETIC_V2
+    schema: MARKETING_FUNNEL
+    description: "Fuente Bronze: 02_marketing_funnel"
+    tables:
+      - name: closed_deals
+      - name: mql

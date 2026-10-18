@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: stg_external_carrier__carrier_events
+    description: "Staging Silver de 08_external_carrier/carrier_events, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: carrier_event_id
+        tests:
+          - unique
+          - not_null
+      - name: shipment_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_external_carrier__carrier_shipments')
+                field: shipment_id
+      - name: carrier_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_external_carrier__carriers')
+                field: carrier_id
+      - name: hub_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_external_carrier__carrier_hubs')
+                field: hub_id
+  - name: stg_external_carrier__carrier_hubs
+    description: "Staging Silver de 08_external_carrier/carrier_hubs, tipado y limpiado desde Bronze."
+    columns:
+      - name: hub_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_external_carrier__carrier_incidents
+    description: "Staging Silver de 08_external_carrier/carrier_incidents, tipado y limpiado desde Bronze."
+    columns:
+      - name: incident_id
+        tests:
+          - unique
+          - not_null
+      - name: shipment_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_external_carrier__carrier_shipments')
+                field: shipment_id
+  - name: stg_external_carrier__carrier_shipments
+    description: "Staging Silver de 08_external_carrier/carrier_shipments, tipado y limpiado desde Bronze."
+    columns:
+      - name: shipment_id
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+      - name: carrier_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_external_carrier__carriers')
+                field: carrier_id
+  - name: stg_external_carrier__carriers
+    description: "Staging Silver de 08_external_carrier/carriers, tipado y limpiado desde Bronze."

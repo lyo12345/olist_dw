@@ -1,0 +1,75 @@
+version: 2
+
+models:
+  - name: stg_finance__commissions
+    description: "Staging Silver de 07_finance/commissions, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: commission_id
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+  - name: stg_finance__financial_reconciliation
+    description: "Staging Silver de 07_finance/financial_reconciliation, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: reconciliation_id
+        tests:
+          - unique
+          - not_null
+      - name: transaction_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_finance__payment_transactions')
+                field: transaction_id
+  - name: stg_finance__payment_transactions
+    description: "Staging Silver de 07_finance/payment_transactions, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: transaction_id
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+  - name: stg_finance__refunds
+    description: "Staging Silver de 07_finance/refunds, tipado y limpiado desde Bronze."
+    columns:
+      - name: refund_id
+        tests:
+          - unique
+          - not_null
+      - name: order_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+  - name: stg_finance__seller_accounts
+    description: "Staging Silver de 07_finance/seller_accounts, tipado y limpiado desde Bronze."
+    columns:
+      - name: account_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_finance__seller_settlements
+    description: "Staging Silver de 07_finance/seller_settlements, tipado y limpiado desde Bronze."
+    columns:
+      - name: settlement_id
+        tests:
+          - unique
+          - not_null
+      - name: seller_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_finance__seller_accounts')
+                field: seller_id

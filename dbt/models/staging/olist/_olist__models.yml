@@ -1,0 +1,103 @@
+version: 2
+
+models:
+  - name: stg_olist__customers
+    description: "Staging Silver de 01_olist/customers, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+  - name: stg_olist__geolocation
+    description: "Staging Silver de 01_olist/geolocation, tipado y limpiado desde Bronze."
+  - name: stg_olist__order_items
+    description: "Staging Silver de 01_olist/order_items, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+      - name: order_item_id
+        tests:
+          - not_null
+      - name: product_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__products')
+                field: product_id
+      - name: seller_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__sellers')
+                field: seller_id
+  - name: stg_olist__order_payments
+    description: "Staging Silver de 01_olist/order_payments, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+      - name: payment_sequential
+        tests:
+          - not_null
+  - name: stg_olist__order_reviews
+    description: "Staging Silver de 01_olist/order_reviews, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: review_id
+        tests:
+          - not_null
+      - name: order_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_olist__orders')
+                field: order_id
+  - name: stg_olist__orders
+    description: "Staging Silver de 01_olist/orders, tipado y limpiado desde Bronze. Materializada como TABLE fisica (>= 3000 filas)."
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__customers')
+                field: customer_id
+  - name: stg_olist__product_category_name_translation
+    description: "Staging Silver de 01_olist/product_category_name_translation, tipado y limpiado desde Bronze."
+    columns:
+      - name: product_category_name
+        tests:
+          - unique
+          - not_null
+  - name: stg_olist__products
+    description: "Staging Silver de 01_olist/products, tipado y limpiado desde Bronze."
+    columns:
+      - name: product_id
+        tests:
+          - unique
+          - not_null
+      - name: product_category_name
+        tests:
+          - relationships:
+              arguments:
+                to: ref('stg_olist__product_category_name_translation')
+                field: product_category_name
+  - name: stg_olist__sellers
+    description: "Staging Silver de 01_olist/sellers, tipado y limpiado desde Bronze."
+    columns:
+      - name: seller_id
+        tests:
+          - unique
+          - not_null

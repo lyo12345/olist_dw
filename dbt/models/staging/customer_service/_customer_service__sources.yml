@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: customer_service
+    database: OLIST_SYNTHETIC_V2
+    schema: CUSTOMER_SERVICE
+    description: "Fuente Bronze: 04_customer_service"
+    tables:
+      - name: customers_crm
+      - name: escalations
+      - name: service_agents
+      - name: service_satisfaction
+      - name: service_tickets
+      - name: ticket_interactions
