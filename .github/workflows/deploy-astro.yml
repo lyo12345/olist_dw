@@ -1,6 +1,7 @@
 name: Deploy to Astro
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -24,3 +25,4 @@ jobs:
           deployment-id: cmv72ohnt02z001k20a56b46c
           root-folder: astro/
           wake-on-deploy: true
+          skip-unchanged: false
